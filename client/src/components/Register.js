@@ -5,14 +5,14 @@ import { registerUser } from '../reducers/user';
 import { setFlash } from '../reducers/flash';
 
 class Register extends Component {
-  state = { email: '', password: '', passwordConfirmation: '' };
+  state = { email: '', password: '', passwordConfirmation: '', name: '' };
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { email, password, passwordConfirmation } = this.state;
+    const { name, email, password, passwordConfirmation } = this.state;
     const { dispatch, history } = this.props;
     if (password === passwordConfirmation) {
-      dispatch(registerUser({ email, password, passwordConfirmation }, history));
+      dispatch(registerUser({ name, email, password, passwordConfirmation }, history));
     } else dispatch(setFlash('Passwords do not match!, please try again', 'red'));
   }
 
@@ -22,12 +22,22 @@ class Register extends Component {
   }
 
   render() {
-    const { email, password, passwordConfirmation } = this.state;
+    const { name, email, password, passwordConfirmation } = this.state;
 
     return (
       <Segment basic>
         <Header as='h1' textAlign='center'>Register Component</Header>
         <Form onSubmit={this.handleSubmit}>
+        <Form.Field>
+            <label htmlFor='email'>Name</label>
+            <input
+              id='name'
+              placeholder='Name'
+              required
+              value={name}
+              onChange={this.handleChange}
+            />
+          </Form.Field>
           <Form.Field>
             <label htmlFor='email'>Email</label>
             <input
