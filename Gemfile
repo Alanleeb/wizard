@@ -31,9 +31,11 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'omniauth'
 gem 'devise'
 gem 'devise_token_auth'
+gem 'aws-sdk'
+
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+ gem 'dotenv-rails'
+ gem 'pry'
 end
 
 group :development do

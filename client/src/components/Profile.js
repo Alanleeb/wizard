@@ -9,24 +9,31 @@ import {
     Button,
     GridColumn
 } from 'semantic-ui-react';
-import connect from 'react-redux';
+import { connect } from 'react-redux';
+import Dropzone from 'react-dropzone';
+import { updateUser } from '../reducers/user';
 
 const defaultImage = 'https://d30y9cdsu7xlg0.cloudfront.net/png/15724-200.png'
 
-class Profile extends React.component {
-    state = { editing: false, formValues: {name: '', email: ''} }
+class Profile extends React.Component {
+    state = { editing: false, formValues: {name: '', email: '', file: ''} }
 
     componentDidMount() {
         const {user: {name, email} } = this.props
         this.setState({ formValues: { name, email } })
     }
 
-    toggelEdit = () => {
-        this.setState( state => {
-            return { editing: !state.editing}
-        })
+    onDrop = (files) => {
+        this.setState({formValues: { ...this.state.formValues, file: files[0] } })
     }
 
+    toggleEdit = () => {
+        debugger
+        this.setState( state => {
+          return { editing: !state.editing }
+        })
+      }
+    
     handleChange = (e) => {
         const { name, value } = e.target
         this.setState({
@@ -37,12 +44,26 @@ class Profile extends React.component {
         })
     }
 
+    handleSubmit = (e) => {
+        e.preventDefault();
+        const { formValues: { name, email, file }} = this.state
+        const { user, dispatch } = this.props;
+        dispatch(updateUser(user.id, { name, email, file }))
+        this.setState({ 
+          editing: false,
+          formValues: {
+            ...this.state.formValues,
+            file: ''
+          }
+         })
+      }
+
     profieView = () => {
         const { user } = this.props;
         return (
             <Fragment>
                 <Grid.Column width={4}>
-                    <Images src={ user.image || defaultImage } />
+        <Image src={ user.image || defaultImage } />
                 </Grid.Column>
                 <GridColumn width={8}>
                     <Header as="h1">{user.name}</Header>
@@ -54,10 +75,16 @@ class Profile extends React.component {
 
     editView = () => {
         const { user } = this.props;
-        const { formValues: {name, email} } = this.state;
+        const { formValues: {name, email, file} } = this.state;
         return (
             <Form onSubmit={this.handleSubmit}>
                 <Grid.Column width={4}>
+                <Dropzone
+                    onDrop={this.onDrop}
+                    multiple={true}
+                    >
+                        { file && <Image src={file.preview} /> }
+                    </Dropzone>
                 </Grid.Column>
                 <Grid.Column width={8}>
                     <Form.Input

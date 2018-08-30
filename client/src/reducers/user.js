@@ -5,6 +5,7 @@ import { setHeaders } from './headers';
 const LOGIN = 'LOGIN';
 const LOGOUT = 'LOGOUT';
 const VALIDATE_TOKEN = 'VALIDATE_TOKEN';
+const USER = 'USER';
 
 const login = (user) => {
   return { type: LOGIN, user };
@@ -14,6 +15,15 @@ const logout = () => {
   return { type: LOGOUT };
 }
 
+export const updateUser = (id, user) => {
+  return (dispatch) => {
+    let data = new FormData()
+    data.append ('file', user.file)
+    axios.put(`/api/users/${id}?name=${user.name}&email=${user.email}`, data)
+    .then( res => dispatch({ type: USER, user: res.data, headers: res.headers }) )
+  }
+}
+
 export const registerUser = (user, history) => {
   return (dispatch) => {
     axios.post('/api/auth', user)
@@ -21,12 +31,12 @@ export const registerUser = (user, history) => {
       const { data: { data: user }, headers } = res;
       dispatch(setHeaders(headers));
       dispatch(login(user));
-      history.push('/')
+      history.push('/profile')
     })
     .catch( res => {
       const messages =
-        res.response.data.errors.full_messages.map(message =>
-          <div>{message}</div>);
+        res.response.data.errors.full_messages.map(message => {
+        <div>{message}</div>});
         const { headers } = res;
         dispatch(setHeaders(headers));
         dispatch(setFlash(messages, 'red'));
@@ -65,7 +75,7 @@ export const handleLogin = (user, history) => {
         const { data: { data: user }, headers } = res;
         dispatch(setHeaders(headers));
         dispatch(login(user));
-        history.push('/');
+        history.push('/profile');
       })
       .catch(res => {
         let errors = res.response.data.errors ? res.response.data.errors : ['Something went wrong']
@@ -102,6 +112,8 @@ export default (state = {}, action) => {
     return action.user;
     case LOGOUT:
     return {};
+    case USER:
+    return action.user;
     default:
     return state;
   }
