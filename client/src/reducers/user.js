@@ -18,9 +18,21 @@ const logout = () => {
 export const updateUser = (id, user) => {
   return (dispatch) => {
     let data = new FormData()
-    data.append ('file', user.file)
+    data.append('file', user.file)
     axios.put(`/api/users/${id}?name=${user.name}&email=${user.email}`, data)
-    .then( res => dispatch({ type: USER, user: res.data, headers: res.headers }) )
+      .then( res => dispatch({ type: USER, user: res.data, headers: res.headers })
+     )
+     .catch( res => {
+      let errors = res.response.data.errors ? res.response.data.errors : ['Something went wrong']
+        if (!Array.isArray(errors))
+          errors = [errors]
+        const messages =
+          errors.map( (message, i) =>
+            <div key={i}>{message}</div>);
+        const { headers } = res;
+        dispatch(setHeaders(headers));
+        dispatch(setFlash(messages, 'red'));
+    })
   }
 }
 

@@ -28,7 +28,6 @@ class Profile extends React.Component {
     }
 
     toggleEdit = () => {
-        debugger
         this.setState( state => {
           return { editing: !state.editing }
         })

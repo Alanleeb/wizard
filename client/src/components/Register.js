@@ -29,7 +29,7 @@ class Register extends Component {
         <Header as='h1' textAlign='center'>Register Component</Header>
         <Form onSubmit={this.handleSubmit}>
         <Form.Field>
-            <label htmlFor='email'>Name</label>
+            <label htmlFor='name'>Name</label>
             <input
               id='name'
               placeholder='Name'
