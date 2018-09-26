@@ -19,7 +19,7 @@ export const updateUser = (id, user) => {
   return (dispatch) => {
     let data = new FormData()
     data.append('file', user.file)
-    axios.put(`/api/users/${id}?name=${user.name}&email=${user.email}`, data)
+    axios.post(`/api/users/${id}?name=${user.name}&email=${user.email}`, data)
       .then( res => dispatch({ type: USER, user: res.data, headers: res.headers })
      )
      .catch( res => {
