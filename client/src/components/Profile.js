@@ -9,9 +9,17 @@ const defaultImage = 'https://d30y9cdsu7xlg0.cloudfront.net/png/15724-200.png'
 class Profile extends React.Component {
   state = { editing: false, formValues: { name: '', email: '', file: '' } }
 
-  componentDidMount() {
-    const { user: { name, email } } = this.props;
-    this.setState({ formValues: { name, email } })
+  // componentDidMount() {
+  //   const { user: { name, email } } = this.props;
+  //   this.setState({ formValues: { name, email } })
+  // }
+
+  static getDerivedStateFromProps(props, state) {
+    const { user } = props 
+    const { formValues, editing } = state 
+    if (user.name !== formValues.name && !editing) {
+      return { formValues: {name: user.name, email: user.email } }
+    }
   }
 
   onDrop = (files) => {
@@ -53,7 +61,7 @@ class Profile extends React.Component {
     return (
       <Fragment>
         <Grid.Column width={4}>
-          <Image src={user.image || defaultImage } />
+          <Image src={user.image || defaultImage } alt="user avatar" />
         </Grid.Column>
         <Grid.Column width={8}>
           <Header as="h1">{user.name}</Header>
@@ -64,7 +72,6 @@ class Profile extends React.Component {
   }
 
   editView = () => {
-    // const { user } = this.props;
     const { formValues: { name, email, file } } = this.state;
     return (
       <Form onSubmit={this.handleSubmit}>
@@ -73,7 +80,7 @@ class Profile extends React.Component {
           onDrop={this.onDrop}
           multiple={false}
         >
-          { file && <Image src={file.preview} /> }
+          { file && <Image src={file.preview} alt="upload preview"/> }
         </Dropzone>
         </Grid.Column>
         <Grid.Column width={8}>
@@ -90,6 +97,7 @@ class Profile extends React.Component {
             value={email}
             required
             onChange={this.handleChange}
+            type="email"
           />
           <Button>Update</Button>
         </Grid.Column>
